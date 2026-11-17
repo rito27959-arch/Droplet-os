@@ -1,0 +1,2 @@
+# Profile "vm": kernel for virtual machines, no firmware blobs (smaller ISO, faster tests)
+linux-image-virtual

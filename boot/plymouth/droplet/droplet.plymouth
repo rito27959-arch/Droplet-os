@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Droplet
+Description=DROPLET BOOT — prismatic eclipse, liquid wordmark
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/droplet
+ScriptFile=/usr/share/plymouth/themes/droplet/droplet.script

@@ -1,0 +1,2 @@
+# Profile "hardware": generic kernel + firmware + CPU microcode for real x86-64 machines
+linux-generic

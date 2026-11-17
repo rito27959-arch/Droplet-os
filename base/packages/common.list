@@ -1,0 +1,28 @@
+# Droplet Base 0.1 — packages common to every profile (one per line, # = comment)
+# Ubuntu minimal system
+ubuntu-minimal
+systemd-sysv
+systemd-resolved
+initramfs-tools
+zstd
+locales
+tzdata
+console-setup
+keyboard-configuration
+sudo
+bash-completion
+less
+nano
+ca-certificates
+# Live boot
+casper
+# Boot splash (DROPLET BOOT)
+plymouth
+plymouth-label
+plymouth-theme-spinner
+# Networking
+network-manager
+# Security baseline
+apparmor
+ufw
+polkitd

@@ -1,0 +1,11 @@
+[Unit]
+Description=DROPLET clean handoff: clear tty1 after the boot splash
+After=plymouth-quit.service plymouth-quit-wait.service
+Before=getty@tty1.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c "printf '\\033[2J\\033[3J\\033[H' > /dev/tty1"
+
+[Install]
+WantedBy=multi-user.target
