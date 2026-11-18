@@ -1,15 +1,33 @@
 // "À propos de cet ordinateur" — real values read from /proc and os-release.
+// Drawn as a macOS 27 window (kit Window BG): opaque window background, radius 16, the active
+// window shadow (0 / +18 / 54, 30 % light, 57 % dark, plus a 1 pt contact line), traffic lights.
 import QtQuick
+import QtQuick.Effects
 import Droplet
 
-Glass {
+Item {
     id: about
     width: 300
     height: col.implicitHeight + 48
-    radius: Theme.rayonDialogue
-    tint: Theme.verreMenu
-    veil: .15
     readonly property var info: SystemControl.about
+
+    RectangularShadow {
+        anchors.fill: parent; anchors.topMargin: 18; anchors.bottomMargin: -18
+        radius: Theme.rayonFenetre; blur: 54; spread: -10
+        color: Theme.dark ? "#91000000" : "#4d000000"
+    }
+    Rectangle {
+        anchors.fill: parent; anchors.margins: -1
+        radius: Theme.rayonFenetre + 1
+        color: Theme.dark ? "#cc000000" : "#33000000"
+    }
+    Rectangle {
+        anchors.fill: parent
+        radius: Theme.rayonFenetre
+        color: Theme.fenetreContenu
+        border.width: Theme.dark ? 1 : 0
+        border.color: "#33ffffff"
+    }
 
     Column {
         id: col
@@ -63,20 +81,11 @@ Glass {
             }
         }
         Item { width: 1; height: 20 }
-        Rectangle {
+        Bouton {
             anchors.horizontalCenter: parent.horizontalCenter
-            width: moreText.implicitWidth + 28; height: 28; radius: 14
-            color: moreMa.pressed ? Theme.elementSurvol : Theme.element
-            border.width: 0.5; border.color: Theme.separateur
-            Text {
-                id: moreText
-                anchors.centerIn: parent
-                text: "Plus d'infos…"
-                color: Theme.label
-                font.family: Theme.texte; font.pixelSize: 13; font.letterSpacing: Theme.tracking(13)
-            }
-            Pression { id: moreMa; anchors.fill: parent; echelle: 0.95
-                       onClicked: { Shell.CloseAll(); SystemControl.openSettings("kcm_about-distro") } }
+            grand: false
+            text: "Plus d'infos…"
+            onClicked: { Shell.CloseAll(); SystemControl.openSettings("kcm_about-distro") }
         }
     }
     Rectangle {   // close button: the kit's traffic light (14 pt), glyph shown on hover

@@ -153,3 +153,36 @@ Limites connues :
 - Fichiers, Terminal, Kate et les autres apps restent des apps KDE. Elles suivent le thème
   (couleurs, Inter, décoration, animations de fenêtres, réglages Breeze dans `breezerc`), mais
   leurs widgets internes gardent les animations de Breeze.
+
+## Cohérence des apps et des dialogues
+
+- **Alertes du shell** (`Alerte.qml`), d'après le kit macOS 27 (« Alert », type Stacked) :
+  - verre Large de 260 pt, rayon 34 ;
+  - icône de 64 pt ;
+  - titre Bold 13, message Regular 11 ;
+  - boutons empilés en capsules de 28 pt (`Bouton.qml` : primaire, destructif, secondaire) ;
+  - Retour lance l'action par défaut, Échap annule.
+- **« À propos »** : une fenêtre du kit (fond opaque, rayon 16, ombre de fenêtre active, feux de
+  14 pt).
+- **Toutes les apps Qt/KDE** : style Kvantum `DropletClair` / `DropletSombre`, généré par
+  `desktop/theme/render/kvantum.py` à partir des mesures du kit.
+  - Contrôles de 24 pt, rayon 6.
+  - Cases à cocher et boutons radio de 16 pt, curseur à bouton capsule de 20 × 16, barres de
+    défilement en surimpression.
+  - Menus de rayon 12, lignes survolées de rayon 8.
+  - Onglets en contrôle segmenté.
+  - Sélection et coches dans l'accent Droplet.
+  - La bascule clair/sombre change aussi le thème Kvantum (pris en compte par les apps ouvertes
+    ensuite).
+- **Icônes** : thèmes `Droplet` / `Droplet-dark` (Breeze, LGPL-3.0). Seuls les dossiers sont
+  recolorés dans le bleu Droplet (`icons_droplet.py`) ; sans cela, Breeze les peindrait dans
+  l'accent rose.
+
+Limites :
+
+- Kvantum ne recharge pas son thème dans une app déjà ouverte.
+- Le bouton par défaut des dialogues KDE est dessiné comme les autres boutons : Kvantum ne sait
+  pas le remplir d'accent comme macOS.
+- Les apps GTK (aucune n'est installée par défaut) ne suivent pas ce style.
+- L'icône « Réseau » de la barre latérale garde la couleur d'accent : c'est une variante de
+  dossier que le recoloriage ne couvre pas encore.

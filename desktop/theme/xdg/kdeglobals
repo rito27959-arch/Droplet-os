@@ -7,10 +7,10 @@ smallestReadableFont=Inter,8,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
 toolBarFont=Inter,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
 
 [Icons]
-Theme=breeze-dark
+Theme=Droplet-dark
 
 [KDE]
-widgetStyle=Breeze
+widgetStyle=kvantum
 SingleClick=false
 AnimationDurationFactor=0.75
 

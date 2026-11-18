@@ -41,3 +41,4 @@ kinfocenter
 # living wallpaper: transitions are films (Qt Multimedia, FFmpeg backend)
 qml6-module-qtmultimedia
 libqt6multimedia6
+qt-style-kvantum

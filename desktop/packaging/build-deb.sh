@@ -49,6 +49,10 @@ cp "$DESKTOP/theme/color-schemes/"*.colors "$PKG/usr/share/color-schemes/"
 cp "$DESKTOP/theme/xdg/kdeglobals" "$DESKTOP/theme/xdg/kwinrc" "$DESKTOP/theme/xdg/kscreenlockerrc" \
    "$DESKTOP/theme/xdg/breezerc" "$PKG/etc/xdg/"
 cp -r "$DESKTOP/theme/sddm/droplet" "$PKG/usr/share/sddm/themes/"
+echo "[deb] icons (Breeze with Droplet folders)"
+python3 "$DESKTOP/theme/render/icons_droplet.py" /usr/share/icons "$PKG/usr/share/icons" >/dev/null
+install -d "$PKG/usr/share/Kvantum"
+cp -r "$DESKTOP/theme/kvantum/." "$PKG/usr/share/Kvantum/"
 install -Dm644 "$DESKTOP/theme/sddm/10-droplet.conf" "$PKG/etc/sddm.conf.d/10-droplet.conf"
 
 echo "[deb] licences"
@@ -65,7 +69,7 @@ Maintainer: Droplet OS <rito27959-arch@users.noreply.github.com>
 Installed-Size: $SIZE
 Section: x11
 Priority: optional
-Depends: kwin-wayland, kwin-style-aurorae, qml6-module-qtmultimedia, libqt6multimedia6, plasma-workspace, plasma-integration, sddm,
+Depends: kwin-wayland, kwin-style-aurorae, qt-style-kvantum | qt6-style-kvantum, qml6-module-qtmultimedia, libqt6multimedia6, plasma-workspace, plasma-integration, sddm,
  qml6-module-org-kde-layershell, qml6-module-qtquick, qml6-module-qtquick-window,
  qml6-module-qtquick-effects, qml6-module-qtqml-workerscript, qml6-module-org-kde-kirigami,
  qt6-wayland, kf6-breeze-icon-theme, fonts-inter, dbus-bin, libkf6service-bin

@@ -67,7 +67,8 @@ QtObject {
         LayerShell.Window.margins.top: Theme.barreMenus
         LayerShell.Window.exclusionZone: -1
         // only the search field takes the keyboard; menus leave the focused app focused
-        LayerShell.Window.keyboardInteractivity: Shell.launcherOpen ? LayerShell.Window.KeyboardInteractivityExclusive
+        LayerShell.Window.keyboardInteractivity: Shell.launcherOpen || ov.confirmAction !== ""
+                                                 ? LayerShell.Window.KeyboardInteractivityExclusive
                                                                     : LayerShell.Window.KeyboardInteractivityNone
 
         // The glass follows each popup frame by frame while it springs open (scaled geometry), and
@@ -82,7 +83,7 @@ QtObject {
             }
             add(dmenu, Theme.rayonMenu); add(amenu, Theme.rayonMenu)
             if (cc.shown) for (const s of c1.shapes(ov.contentItem)) r.push(s)
-            add(about, Theme.rayonDialogue); add(confirm, Theme.rayonDialogue)
+            add(confirm, 34)   // About is an opaque window: no glass
             if (launcher.shown) {
                 const q = launcher.mapToItem(ov.contentItem, 0, 0, launcher.width, launcher.height)
                 const k = q.width / Math.max(1, launcher.width)
@@ -181,66 +182,29 @@ QtObject {
                 depart: 0.9
                 transformOrigin: Item.Center
                 x: (ov.width - width) / 2; y: Math.round(ov.height * 0.24)
-                width: 272; height: d1.height
+                width: 260; height: d1.height
                 readonly property var texts: ({
-                    "reboot": ["Voulez-vous redémarrer l'ordinateur maintenant ?", "Redémarrer"],
-                    "poweroff": ["Voulez-vous éteindre l'ordinateur maintenant ?", "Éteindre"],
-                    "logout": ["Voulez-vous fermer la session ?", "Fermer la session"] })
-                Glass {
+                    "reboot": ["Voulez-vous redémarrer l'ordinateur maintenant ?", "Redémarrer",
+                               "Les apps ouvertes seront fermées."],
+                    "poweroff": ["Voulez-vous éteindre l'ordinateur maintenant ?", "Éteindre",
+                                 "Les apps ouvertes seront fermées."],
+                    "logout": ["Voulez-vous fermer la session ?", "Fermer la session",
+                               "Les apps ouvertes seront fermées."] })
+                Alerte {
                     id: d1
                     width: parent.width
-                    height: dcol.implicitHeight + 40
-                    radius: Theme.rayonDialogue
-                    tint: Theme.verreMenu
-                    veil: .15
-                    Column {
-                        id: dcol
-                        x: 20; y: 22; width: parent.width - 40
-                        spacing: 0
-                        Image {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            source: Theme.icon("assistant"); width: 56; height: 56
-                            sourceSize: Qt.size(112, 112); smooth: true; mipmap: true
-                        }
-                        Item { width: 1; height: 14 }
-                        Text {
-                            width: parent.width
-                            horizontalAlignment: Text.AlignHCenter
-                            wrapMode: Text.Wrap
-                            text: confirm.texts[ov.confirmAction] ? confirm.texts[ov.confirmAction][0] : ""
-                            color: Theme.label
-                            font.family: Theme.texte; font.pixelSize: 13; font.weight: Font.Bold
-                            font.letterSpacing: Theme.tracking(13)
-                        }
-                        Item { width: 1; height: 18 }
-                        Row {
-                            spacing: 8
-                            Rectangle {
-                                width: (dcol.width - 8) / 2; height: 28; radius: 14
-                                color: Theme.element; border.width: 0.5; border.color: Theme.separateur
-                                Text { anchors.centerIn: parent; text: "Annuler"; color: Theme.label
-                                       font.family: Theme.texte; font.pixelSize: 13 }
-                                Pression { anchors.fill: parent; echelle: 0.95; onClicked: ov.confirmAction = "" }
-                            }
-                            Rectangle {
-                                width: (dcol.width - 8) / 2; height: 28; radius: 14
-                                color: Theme.goutteRemplie
-                                Text { anchors.centerIn: parent; color: Theme.surAccent
-                                       text: confirm.texts[ov.confirmAction] ? confirm.texts[ov.confirmAction][1] : ""
-                                       font.family: Theme.texte; font.pixelSize: 13; font.weight: Font.DemiBold }
-                                Pression {
-                                    anchors.fill: parent
-                                    echelle: 0.95
-                                    onClicked: {
-                                        const a = ov.confirmAction
-                                        ov.confirmAction = ""
-                                        if (a === "reboot") SystemControl.reboot()
-                                        else if (a === "poweroff") SystemControl.powerOff()
-                                        else if (a === "logout") SystemControl.logout()
-                                    }
-                                }
-                            }
-                        }
+                    onVisibleChanged: if (visible) Qt.callLater(forceActiveFocus)
+                    titre: confirm.texts[ov.confirmAction] ? confirm.texts[ov.confirmAction][0] : ""
+                    message: confirm.texts[ov.confirmAction] ? confirm.texts[ov.confirmAction][2] : ""
+                    boutons: [{ text: confirm.texts[ov.confirmAction] ? confirm.texts[ov.confirmAction][1] : "", role: "primaire" },
+                              { text: "Annuler", role: "secondaire" }]
+                    onChoisi: (i) => {
+                        const a = ov.confirmAction
+                        ov.confirmAction = ""
+                        if (i !== 0) return
+                        if (a === "reboot") SystemControl.reboot()
+                        else if (a === "poweroff") SystemControl.powerOff()
+                        else if (a === "logout") SystemControl.logout()
                     }
                 }
             }

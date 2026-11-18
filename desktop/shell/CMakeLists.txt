@@ -33,7 +33,7 @@ qt_add_qml_module(droplet-shell
         qml/Wallpaper.qml qml/Sky.qml qml/MenuBar.qml qml/DropletMenu.qml qml/AppMenu.qml
         qml/Dock.qml qml/Launcher.qml qml/ControlCenter.qml qml/Notifications.qml
         qml/Widgets.qml qml/About.qml qml/Toggle.qml qml/Slider.qml qml/MenuItem.qml
-        qml/Ressort.qml qml/Teinte.qml qml/Pression.qml
+        qml/Ressort.qml qml/Teinte.qml qml/Pression.qml qml/Bouton.qml qml/Alerte.qml
     RESOURCES
         assets/eclipse.svg
 )

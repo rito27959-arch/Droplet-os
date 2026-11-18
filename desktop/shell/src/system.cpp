@@ -185,7 +185,7 @@ void SystemControl::setDarkMode(bool dark)
 
     // 2. icons that read well on the new background
     KConfigGroup icons(KSharedConfig::openConfig(QStringLiteral("kdeglobals")), QStringLiteral("Icons"));
-    icons.writeEntry("Theme", dark ? QStringLiteral("breeze-dark") : QStringLiteral("breeze"), KConfig::Notify);
+    icons.writeEntry("Theme", dark ? QStringLiteral("Droplet-dark") : QStringLiteral("Droplet"), KConfig::Notify);
     icons.sync();
     QDBusMessage iconSig = QDBusMessage::createSignal(QStringLiteral("/KIconLoader"), QStringLiteral("org.kde.KIconLoader"),
                                                       QStringLiteral("iconChanged"));
@@ -198,6 +198,14 @@ void SystemControl::setDarkMode(bool dark)
     deco.sync();
     QDBusConnection::sessionBus().send(QDBusMessage::createSignal(QStringLiteral("/KWin"), QStringLiteral("org.kde.KWin"),
                                                                   QStringLiteral("reloadConfig")));
+
+    // 4. the widget style of every app (Kvantum, Droplet themes with the macOS 27 metrics).
+    // Kvantum reads it when an app starts: apps opened afterwards follow the new appearance.
+    const QString dir = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/Kvantum");
+    QDir().mkpath(dir);
+    QFile kv(dir + QStringLiteral("/kvantum.kvconfig"));
+    if (kv.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
+        kv.write(QStringLiteral("[General]\ntheme=%1\n").arg(scheme).toUtf8());
 }
 
 void SystemControl::suspend() { run(QStringLiteral("systemctl"), {QStringLiteral("suspend")}); }

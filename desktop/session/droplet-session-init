@@ -10,4 +10,11 @@ kbuildsycoca6 --noincremental >/dev/null 2>&1 || true
 for agent in /usr/lib/x86_64-linux-gnu/libexec/polkit-kde-authentication-agent-1 /usr/libexec/polkit-kde-authentication-agent-1; do
     [ -x "$agent" ] && { "$agent" >/dev/null 2>&1 & break; }
 done
+# widget style of the apps: the Kvantum theme that matches the current appearance
+KV="${XDG_CONFIG_HOME:-$HOME/.config}/Kvantum/kvantum.kvconfig"
+if [ ! -f "$KV" ]; then
+    scheme=$(kreadconfig6 --file kdeglobals --group General --key ColorScheme 2>/dev/null)
+    mkdir -p "$(dirname "$KV")"
+    printf '[General]\ntheme=%s\n' "${scheme:-DropletSombre}" > "$KV"
+fi
 exec /usr/bin/droplet-shell
