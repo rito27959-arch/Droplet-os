@@ -70,6 +70,30 @@ printf "[Daemon]\nTheme=droplet\nShowDelay=0\nDeviceTimeout=8\n" > /etc/plymouth
 # --- clean handoff: clear tty1 when the splash ends (no firmware/systemd text left) ----
 systemctl enable droplet-clear-console.service >/dev/null 2>&1
 
+# --- layer "desktop" (0.2 Aura): Droplet session, login screen, live autologin ----------
+if [[ " ${LAYERS:-} " == *" desktop "* ]]; then
+  apt-get install -y --no-install-recommends /tmp/debs/droplet-desktop_*_amd64.deb
+  # the live user logs straight into the Droplet session (installed systems use the login screen)
+  install -d /etc/sddm.conf.d
+  printf '[Autologin]\nUser=%s\nSession=droplet\nRelogin=false\n' "$LIVE_USER" > /etc/sddm.conf.d/20-droplet-live.conf
+  # casper's 15autologin appends "[Autologin] Session=" (empty: it only knows Ubuntu flavours) to
+  # /etc/sddm.conf, which overrides sddm.conf.d: name our session right after it, at boot.
+  cat > /usr/share/initramfs-tools/scripts/casper-bottom/16droplet_session <<'SH'
+#!/bin/sh
+PREREQ="15autologin"
+prereqs() { echo "$PREREQ"; }
+case "$1" in prereqs) prereqs; exit 0;; esac
+if [ -f /root/etc/sddm.conf ]; then
+    sed -i 's/^Session=$/Session=droplet.desktop/' /root/etc/sddm.conf
+fi
+SH
+  chmod 0755 /usr/share/initramfs-tools/scripts/casper-bottom/16droplet_session
+  systemctl enable sddm.service >/dev/null 2>&1
+  systemctl set-default graphical.target >/dev/null
+  # the sddm user must be able to read the theme's wallpaper and avatar (world-readable)
+  chmod -R a+rX /usr/share/droplet /usr/share/sddm/themes/droplet
+fi
+
 # --- initramfs: rebuild so it contains casper + the droplet theme ---------------
 update-initramfs -u -k all >/dev/null 2>&1 || update-initramfs -u -k all
 

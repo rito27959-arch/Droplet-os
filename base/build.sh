@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # =============================================================================
-# Droplet Base 0.1 — bootable live ISO builder (x86-64, BIOS + UEFI)
+# Droplet OS — bootable live ISO builder (x86-64, BIOS + UEFI)
 #
 #   sudo ./base/build.sh                      # PROFILE=vm (default)
 #   sudo PROFILE=hardware ./base/build.sh     # real machines (firmware + microcode)
-#   sudo LAYERS=session-kwin ./base/build.sh  # + optional KWin/Qt6 layer (untested in 0.1)
+#   sudo LAYERS= ./base/build.sh              # console base only (0.1); default LAYERS=desktop (0.2)
 #
 # Pipeline: mmdebstrap (Ubuntu 26.04 rootfs) -> customize hook (branding, plymouth,
 # live config, security baseline) -> squashfs -> casper layout -> grub-mkrescue ISO.

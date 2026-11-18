@@ -1,0 +1,43 @@
+# Layer "desktop" (Droplet OS 0.2 "Aura"): Wayland session on KWin + the Droplet shell.
+# The droplet-desktop package itself is built by desktop/packaging/build-deb.sh and
+# installed by the customize hook (it is not in the Ubuntu archive).
+kwin-wayland
+kwin-style-aurorae
+plasma-workspace
+plasma-integration
+sddm
+qt6-wayland
+qml6-module-org-kde-layershell
+qml6-module-qtquick
+qml6-module-qtquick-window
+qml6-module-qtquick-effects
+qml6-module-qtqml-workerscript
+qml6-module-org-kde-kirigami
+kf6-breeze-icon-theme
+breeze
+breeze-cursor-theme
+fonts-inter
+fonts-noto-core
+fonts-noto-mono
+xwayland
+mesa-libgallium
+libgl1-mesa-dri
+dbus-user-session
+pipewire
+pipewire-pulse
+wireplumber
+brightnessctl
+rfkill
+libnotify-bin
+xdg-desktop-portal-kde
+polkit-kde-agent-1
+# applications (all Qt 6 / KF6)
+dolphin
+konsole
+kate
+systemsettings
+kde-spectacle
+kinfocenter
+# living wallpaper: transitions are films (Qt Multimedia, FFmpeg backend)
+qml6-module-qtmultimedia
+libqt6multimedia6

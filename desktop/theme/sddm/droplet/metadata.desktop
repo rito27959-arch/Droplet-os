@@ -1,0 +1,13 @@
+[SddmGreeterTheme]
+Name=Droplet
+Description=Écran de connexion de Droplet OS
+Author=Droplet OS
+License=GPL-3.0
+Type=sddm-theme
+Version=0.2
+Website=https://github.com/rito27959-arch/Droplet-os
+MainScript=Main.qml
+ConfigFile=theme.conf
+Theme-Id=droplet
+Theme-API=2.0
+QtVersion=6

@@ -5,6 +5,7 @@
   vmtest.py visual     <iso> <outdir>   1080p splash screenshots
   vmtest.py bios       <iso> <outdir>   unmodified ISO boot via GRUB (BIOS)
   vmtest.py uefi       <iso> <outdir>   unmodified ISO boot via GRUB (UEFI/OVMF)
+  vmtest.py desktop    <iso> <outdir>   0.2: Droplet session (KWin + shell), checks + real screenshots
 
 Uses KVM when /dev/kvm exists, otherwise TCG (slow but works anywhere).
 Exit code 0 = all checks passed.
@@ -85,7 +86,12 @@ def wait_for(ser, pattern, timeout, log):
     rx = re.compile(pattern.encode())
     while time.time() < end:
         d = ser.read()
-        if d: log.write(d); log.flush()
+        if d:
+            log.write(d); log.flush()
+            # systemd/agetty ask the terminal for the cursor position (ESC[6n) to learn its size
+            # and can wait for the answer: reply like a 24 x 80 terminal
+            for _ in range(d.count(b"\x1b[6n")):   # one answer per query (they can arrive together)
+                ser.send("\x1b[24;80R")
         if rx.search(ser.buf):
             return True
     return False
@@ -147,6 +153,117 @@ def functional(iso, out):
     return results
 
 
+class Session:
+    """serial console of the live user, with the graphical session's D-Bus."""
+    def __init__(self, ser, log):
+        self.ser, self.log = ser, log
+
+    def run(self, c, timeout=300):
+        name = f"x{int(time.time() * 1000) % 10**8}"
+        self.ser.buf = b""
+        self.ser.send(f"{c}; echo __E\"\"ND_{name}__\n")
+        wait_for(self.ser, f"__END_{name}__" + r"\r?\n", timeout, self.log)
+        text = self.ser.buf.decode(errors="replace")
+        text = re.sub(r"\x1b\][^\x1b\x07]*(\x1b\\|\x07)", "\n", text)
+        text = re.sub(r"\x1b\[[0-9;?]*[A-Za-z]", "", text)
+        return "\n".join(text.strip().splitlines()[1:-1])
+
+    def shell(self, method, *args):
+        sig = "".join("b" if isinstance(x, bool) else "s" if isinstance(x, str) else "i" for x in args)
+        vals = " ".join(("true" if x else "false") if isinstance(x, bool) else f"'{x}'" if isinstance(x, str) else str(x)
+                        for x in args)
+        return self.run(f"busctl --user call org.droplet.Shell /Shell org.droplet.Shell {method} {sig} {vals}".rstrip())
+
+
+def desktop(iso, out):
+    """0.2: boots to the Droplet session, checks it and takes real screenshots of each surface."""
+    from PIL import Image
+    tmp = tempfile.mkdtemp()
+    k = extract(iso, "/casper/vmlinuz", f"{tmp}/vmlinuz"); i = extract(iso, "/casper/initrd", f"{tmp}/initrd")
+    cmd = ["qemu-system-x86_64", "-m", "4096", "-smp", "2", "-cdrom", iso,
+           "-qmp", f"unix:{tmp}/qmp.sock,server=on,wait=off",
+           "-serial", f"unix:{tmp}/serial.sock,server=on,wait=off",
+           "-display", "none", "-device", "virtio-vga,xres=1440,yres=900", "-no-reboot",
+           "-audiodev", "none,id=snd0", "-device", "intel-hda", "-device", "hda-duplex,audiodev=snd0",
+           "-kernel", k, "-initrd", i, "-append",
+           "boot=casper quiet splash console=ttyS0,115200n8 console=tty1 video=1440x900 ---"]
+    # TCG: llvmpipe crashes on QEMU 8.2's emulated AVX ("-cpu max"); a CPU without AVX (128-bit llvmpipe) is stable
+    cmd += ["-enable-kvm", "-cpu", "host"] if KVM else ["-accel", "tcg,thread=multi", "-cpu", "Nehalem-v2"]
+    vm = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+    log = open(out / "desktop-serial.log", "wb")
+    ser = Unix(f"{tmp}/serial.sock"); qmp = QMP(f"{tmp}/qmp.sock")
+    shots = out / "captures"; shots.mkdir(exist_ok=True)
+    results = {}
+    t0 = time.time()
+
+    def shot(name):
+        ppm = Path(tmp) / f"{name}.ppm"
+        qmp.shot(ppm); time.sleep(1.5)
+        Image.open(ppm).save(shots / f"{name}.png")
+        results.setdefault("captures", []).append(f"{name}.png")
+
+    try:
+        ok = wait_for(ser, r"login:", 2400 if not KVM else 300, log)
+        results["boot_to_login"] = ok
+        if not ok:
+            shot("echec-demarrage"); return results
+        ser.send("droplet\n"); time.sleep(3)
+        if b"assword" in ser.buf[-200:]: ser.send("\n")
+        wait_for(ser, r"droplet@droplet", 120, log)
+        S = Session(ser, log)
+        S.run("export TERM=dumb PAGER=cat SYSTEMD_COLORS=0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u)/bus")
+        # wait for the shell (TCG + llvmpipe: several minutes)
+        for _ in range(120):
+            if re.search(r"^\d+$", S.run("pgrep -x droplet-shell | head -1"), re.M):
+                break
+            time.sleep(10)
+        results["seconds_to_shell"] = round(time.time() - t0)
+        time.sleep(90 if not KVM else 15)
+        checks = {
+            "session_droplet": ("loginctl show-session $(loginctl list-sessions --no-legend | awk '/seat0/{print $1; exit}') -p Desktop -p Type", r"(?i)Desktop=droplet[\s\S]*Type=wayland|Type=wayland[\s\S]*Desktop=droplet"),
+            "kwin_running": ("pgrep -c kwin_wayland", r"^[1-9]"),
+            "shell_running": ("pgrep -c droplet-shell", r"^[1-9]"),
+            "compositing_opengl": ("busctl --user call org.kde.KWin /KWin org.kde.KWin supportInformation | sed 's/\\\\n/\\n/g' | grep -iE 'Compositing Type|OpenGL renderer|OpenGL version string' | head -3", r"OpenGL"),
+            "glass_effect_loaded": ("busctl --user call org.kde.KWin /Effects org.kde.kwin.Effects isEffectLoaded s dropletglass", r"^b true"),
+            "notifications_server": ("busctl --user call org.freedesktop.Notifications /org/freedesktop/Notifications org.freedesktop.Notifications GetServerInformation", r"Droplet Shell"),
+            "shell_dbus": ("busctl --user introspect org.droplet.Shell /Shell | grep -c ToggleLauncher", r"^1"),
+        }
+        for name, (c, rx) in checks.items():
+            o = S.run(c)
+            results[name] = bool(re.search(rx, o, re.M))
+            results[name + "_out"] = o.splitlines()[-3:]
+        results["shell_errors"] = S.run("journalctl --user -b --no-pager -o cat 2>/dev/null | grep -iE 'qml|droplet' | grep -iE 'error|warning|unable|cannot' | tail -15").splitlines()
+
+        slow = 1 if KVM else 3
+        shot("01-bureau-nuit")
+        S.shell("Launch", "org.kde.dolphin.desktop"); time.sleep(25 * slow)
+        shot("02-fenetre")
+        S.shell("ShowMenu", "droplet"); time.sleep(6 * slow); shot("03-menu-droplet")
+        S.shell("ShowMenu", "app"); time.sleep(6 * slow); shot("04-menu-app")
+        S.shell("CloseAll"); S.shell("ToggleControlCenter"); time.sleep(6 * slow); shot("05-centre-de-controle")
+        S.shell("CloseAll"); S.shell("ToggleLauncher"); time.sleep(6 * slow); shot("06-recherche")
+        S.shell("CloseAll"); S.shell("ShowAbout"); time.sleep(6 * slow); shot("07-a-propos")
+        S.shell("CloseAll")
+        S.run("notify-send -a Fichiers -i org.kde.dolphin 'Copie terminée' '3 éléments copiés dans Documents.'")
+        time.sleep(3 * slow); shot("08-notification")
+        # appearance: night -> day (the drawn transition), then the living garden
+        S.shell("SetDarkMode", False)
+        for j in range(4):
+            time.sleep(4 * slow); shot(f"09-transition-{j}")
+        time.sleep(30 * slow); shot("10-bureau-jour")
+        S.shell("ToggleControlCenter"); time.sleep(6 * slow); shot("11-centre-de-controle-jour")
+        S.shell("CloseAll")
+        ser.send("sudo poweroff\n")
+        try:
+            vm.wait(180)
+        except subprocess.TimeoutExpired:
+            pass
+    finally:
+        vm.kill()
+    results["total_seconds"] = round(time.time() - t0)
+    return results
+
+
 def screenshots(iso, out, tag, extra, seconds, every):
     tmp = tempfile.mkdtemp()
     ex = list(extra)
@@ -173,6 +290,12 @@ def main():
         bools = {k: v for k, v in r.items() if isinstance(v, bool)}
         print(json.dumps(r, indent=1))
         sys.exit(0 if all(bools.values()) else 1)
+    if mode == "desktop":
+        r = desktop(iso, out)
+        (out / "desktop.json").write_text(json.dumps(r, indent=1, ensure_ascii=False))
+        print(json.dumps(r, indent=1, ensure_ascii=False))
+        bools = {k: v for k, v in r.items() if isinstance(v, bool)}
+        sys.exit(0 if bools and all(bools.values()) else 1)
     slow = 1 if KVM else 1.4   # TCG: boot to login takes ~100 s
     if mode == "visual":
         tmp = tempfile.mkdtemp()

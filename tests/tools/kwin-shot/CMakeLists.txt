@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.25)
+project(kwin-shot LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 23)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui DBus)
+add_executable(kwin-shot main.cpp)
+target_link_libraries(kwin-shot PRIVATE Qt6::Core Qt6::Gui Qt6::DBus)
+install(TARGETS kwin-shot RUNTIME DESTINATION lib/droplet/tests)

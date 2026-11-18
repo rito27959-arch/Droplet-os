@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Droplet
+Comment=Session Droplet OS (Wayland, KWin)
+Exec=/usr/bin/startdroplet
+TryExec=/usr/bin/startdroplet
+DesktopNames=Droplet;KDE
+X-KDE-PluginInfo-Version=0.2

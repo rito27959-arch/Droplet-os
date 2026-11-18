@@ -1,0 +1,13 @@
+#!/bin/sh
+# Runs inside KWin (WAYLAND_DISPLAY is set): publish the environment to D-Bus/systemd-activated
+# services (portals, PipeWire clients, apps started by D-Bus), then become the Droplet shell.
+dbus-update-activation-environment --systemd \
+    WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XDG_SESSION_DESKTOP \
+    DESKTOP_SESSION KDE_FULL_SESSION KDE_SESSION_VERSION XDG_MENU_PREFIX QT_QPA_PLATFORM 2>/dev/null
+# rebuild the application cache once (fast when already up to date)
+kbuildsycoca6 --noincremental >/dev/null 2>&1 || true
+# authentication dialogs (administrator password) for apps and system settings
+for agent in /usr/lib/x86_64-linux-gnu/libexec/polkit-kde-authentication-agent-1 /usr/libexec/polkit-kde-authentication-agent-1; do
+    [ -x "$agent" ] && { "$agent" >/dev/null 2>&1 & break; }
+done
+exec /usr/bin/droplet-shell

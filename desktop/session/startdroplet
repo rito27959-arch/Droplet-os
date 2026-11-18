@@ -1,0 +1,18 @@
+#!/bin/sh
+# Droplet OS 0.2 — starts the Droplet Wayland session (launched by the display manager as the user).
+# KWin is the compositor; when the Droplet shell exits (Fermer la session), the session ends.
+
+export XDG_SESSION_TYPE=wayland
+export XDG_CURRENT_DESKTOP=Droplet:KDE      # KDE: Qt/KF6 apps load the KDE platform theme
+export XDG_SESSION_DESKTOP=droplet
+export DESKTOP_SESSION=droplet
+export KDE_FULL_SESSION=true
+export KDE_SESSION_VERSION=6
+export XDG_MENU_PREFIX=plasma-
+export QT_QPA_PLATFORM="wayland;xcb"
+export QT_WAYLAND_RECONNECT=1
+export MOZ_ENABLE_WAYLAND=1
+
+# Per-user defaults are seeded from /etc/xdg on first login by KConfig itself.
+# no lock screen in 0.2 (no unlock UI yet): never lock the user out
+exec /usr/bin/kwin_wayland_wrapper --xwayland --no-lockscreen --exit-with-session=/usr/lib/droplet/droplet-session-init

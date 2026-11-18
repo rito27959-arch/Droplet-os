@@ -1,0 +1,15 @@
+{
+ "KPlugin": {
+  "Id": "DropletClair",
+  "Name": "Droplet clair",
+  "Description": "Décoration de fenêtre de Droplet OS",
+  "Version": "0.2",
+  "License": "GPL-3.0",
+  "Authors": [
+   {
+    "Name": "Droplet OS"
+   }
+  ]
+ },
+ "X-Plasma-API": "declarativeappletscript"
+}

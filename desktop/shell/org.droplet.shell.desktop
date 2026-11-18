@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Droplet Shell
+Comment=Bureau de Droplet OS : barre de menus, Dock, recherche, centre de contrôle
+Exec=/usr/bin/droplet-shell
+Icon=/usr/share/droplet/icons/assistant.png
+NoDisplay=true
+OnlyShowIn=Droplet;
+X-KDE-Wayland-Interfaces=org_kde_plasma_window_management,org_kde_kwin_keystate,zkde_screencast_unstable_v1
+X-KDE-DBUS-Restricted-Interfaces=org.kde.KWin.ScreenShot2

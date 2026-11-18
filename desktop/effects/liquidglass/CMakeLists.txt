@@ -1,0 +1,18 @@
+# Droplet Liquid Glass — KWin 6 effect (out of tree)
+cmake_minimum_required(VERSION 3.25)
+project(dropletglass VERSION 0.2.0 LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(ECM 6.0 REQUIRED NO_MODULE)
+list(APPEND CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
+include(KDEInstallDirs)
+include(KDECMakeSettings)
+find_package(Qt6 6.8 REQUIRED COMPONENTS Core Gui DBus Widgets Quick)
+find_package(KF6 6.0 REQUIRED COMPONENTS Config CoreAddons)
+find_package(KWin REQUIRED)
+
+add_library(dropletglass MODULE dropletglass.cpp dropletglass.qrc)
+target_link_libraries(dropletglass PRIVATE KWin::kwin Qt6::Core Qt6::Gui Qt6::DBus KF6::ConfigCore KF6::CoreAddons)
+set_target_properties(dropletglass PROPERTIES PREFIX "")
+install(TARGETS dropletglass DESTINATION ${KDE_INSTALL_PLUGINDIR}/kwin/effects/plugins)

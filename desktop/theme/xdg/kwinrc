@@ -1,0 +1,44 @@
+[org.kde.kdecoration2]
+library=org.kde.kwin.aurorae
+theme=__aurorae__svg__DropletSombre
+ButtonsOnLeft=XIA
+ButtonsOnRight=
+BorderSize=Normal
+BorderSizeAuto=false
+
+[Plugins]
+# the Droplet Liquid Glass effect replaces blur and background contrast
+blurEnabled=false
+contrastEnabled=false
+dropletglassEnabled=true
+# window motion, macOS-like: windows zoom in/out (scale), minimise into their Dock icon (magic
+# lamp = genie, the Dock publishes each icon's geometry), dialogs slide from their parent (sheet)
+slidingpopupsEnabled=true
+scaleEnabled=true
+squashEnabled=false
+magiclampEnabled=true
+sheetEnabled=true
+maximizeEnabled=true
+fadingpopupsEnabled=true
+
+[Effect-scale]
+InScale=0.9
+OutScale=0.94
+
+[Effect-magiclamp]
+AnimationDuration=360
+
+[Compositing]
+Backend=OpenGL
+LatencyPolicy=Medium
+
+[Windows]
+Placement=Centered
+BorderlessMaximizedWindows=false
+
+[Desktops]
+Number=1
+Rows=1
+
+[NightColor]
+Active=false

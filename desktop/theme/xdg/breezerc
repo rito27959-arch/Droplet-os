@@ -1,0 +1,16 @@
+# Droplet: KDE apps drawn with Breeze, tuned toward the Droplet / macOS look and motion
+[Style]
+AnimationsEnabled=true
+AnimationsDuration=180
+MnemonicsMode=MN_AUTO
+ToolBarDrawItemSeparator=false
+SidePanelDrawFrame=false
+DockWidgetDrawFrame=false
+TitleWidgetDrawFrame=false
+ViewDrawFocusIndicator=false
+MenuItemDrawStrongFocus=false
+TabBarDrawCenteredTabs=true
+ScrollBarAddLineButtons=0
+ScrollBarSubLineButtons=0
+SliderDrawTickMarks=false
+WindowDragMode=WD_FULL

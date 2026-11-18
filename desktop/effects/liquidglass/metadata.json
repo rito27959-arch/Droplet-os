@@ -1,0 +1,14 @@
+{
+    "KPlugin": {
+        "Category": "Appearance",
+        "Description": "Liquid Glass material behind the Droplet shell surfaces (lensing, dispersion, light)",
+        "Description[fr]": "Matière Liquid Glass derrière les surfaces du shell Droplet (lentille, dispersion, lumière)",
+        "EnabledByDefault": true,
+        "License": "GPL",
+        "Name": "Droplet Liquid Glass",
+        "Name[fr]": "Verre liquide Droplet"
+    },
+    "org.kde.kwin.effect": {
+        "enabledByDefaultMethod": true
+    }
+}

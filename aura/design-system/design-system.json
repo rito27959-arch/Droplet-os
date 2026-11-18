@@ -1,0 +1,175 @@
+{
+ "v": 3,
+ "layout": "files",
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-11-17T16:55:00Z"
+ },
+ "title": "Droplet OS — Aura",
+ "namespace": "Aura",
+ "libraries": [],
+ "sections": {},
+ "groups": [
+  "Logo",
+  "Icones-apps",
+  "Fonds-ecran",
+  "Ecrans-reference"
+ ],
+ "assetGroups": {
+  "Logo": {
+   "name": "Logo",
+   "tile": "m",
+   "order": [
+    "eclipse-blanc.svg",
+    "eclipse-goutte.svg",
+    "eclipse-encre.svg"
+   ],
+   "files": {
+    "eclipse-blanc.svg": {
+     "name": "eclipse-blanc.svg",
+     "blob": "0e7bc96e625aaa9487bcb4ec7c1fdfb4",
+     "size": 298,
+     "type": "image/svg+xml"
+    },
+    "eclipse-goutte.svg": {
+     "name": "eclipse-goutte.svg",
+     "blob": "a46872117269fb30845c7cb7896c82f9",
+     "size": 298,
+     "type": "image/svg+xml"
+    },
+    "eclipse-encre.svg": {
+     "name": "eclipse-encre.svg",
+     "blob": "f1c821e5aafe7f9522e1fb4ae03dec17",
+     "size": 298,
+     "type": "image/svg+xml"
+    }
+   }
+  },
+  "Icones-apps": {
+   "name": "Icones-apps",
+   "tile": "s",
+   "order": [
+    "icone-fichiers.png",
+    "icone-navigateur.png",
+    "icone-store.png",
+    "icone-photos.png",
+    "icone-musique.png",
+    "icone-calendrier.png",
+    "icone-assistant.png",
+    "icone-terminal.png",
+    "icone-reglages.png",
+    "icone-corbeille.png"
+   ],
+   "files": {
+    "icone-fichiers.png": {
+     "name": "icone-fichiers.png",
+     "blob": "2583bba5a9da34616b1872090afb2db2",
+     "size": 57440,
+     "type": "image/png"
+    },
+    "icone-navigateur.png": {
+     "name": "icone-navigateur.png",
+     "blob": "5ab151353ce2238ef86030a66df8a8f5",
+     "size": 97330,
+     "type": "image/png"
+    },
+    "icone-store.png": {
+     "name": "icone-store.png",
+     "blob": "d909b75c7b0aad542d41d909d412e03b",
+     "size": 67211,
+     "type": "image/png"
+    },
+    "icone-photos.png": {
+     "name": "icone-photos.png",
+     "blob": "15b2228cc50878b0a778347df39b419b",
+     "size": 68447,
+     "type": "image/png"
+    },
+    "icone-musique.png": {
+     "name": "icone-musique.png",
+     "blob": "56276191df203c0ee16eb409690d8c9f",
+     "size": 89278,
+     "type": "image/png"
+    },
+    "icone-calendrier.png": {
+     "name": "icone-calendrier.png",
+     "blob": "f85ba267397d803988d5596092084c8e",
+     "size": 33141,
+     "type": "image/png"
+    },
+    "icone-assistant.png": {
+     "name": "icone-assistant.png",
+     "blob": "95ea1d1b7951cce4bb9a15d2143ab02c",
+     "size": 113958,
+     "type": "image/png"
+    },
+    "icone-terminal.png": {
+     "name": "icone-terminal.png",
+     "blob": "6595e3552d9c97c2d3a724984c19efe7",
+     "size": 65579,
+     "type": "image/png"
+    },
+    "icone-reglages.png": {
+     "name": "icone-reglages.png",
+     "blob": "39219385333c9eb0b39fe206b13d76ea",
+     "size": 81886,
+     "type": "image/png"
+    },
+    "icone-corbeille.png": {
+     "name": "icone-corbeille.png",
+     "blob": "e4727447a9d9f278260a7f09fc9eaa05",
+     "size": 50391,
+     "type": "image/png"
+    }
+   }
+  },
+  "Fonds-ecran": {
+   "name": "Fonds-ecran",
+   "tile": "l",
+   "order": [
+    "eclipse-lumineux.jpg",
+    "fond-apercus.jpg"
+   ],
+   "files": {
+    "eclipse-lumineux.jpg": {
+     "name": "eclipse-lumineux.jpg",
+     "blob": "afe154f60dc8391679c9f4d60a8e4bfd",
+     "size": 527137,
+     "type": "image/jpeg"
+    },
+    "fond-apercus.jpg": {
+     "name": "fond-apercus.jpg",
+     "blob": "5f93432bbe3afd209c4f33530dea6557",
+     "size": 49524,
+     "type": "image/jpeg"
+    }
+   }
+  },
+  "Ecrans-reference": {
+   "name": "Ecrans-reference",
+   "tile": "l",
+   "order": [
+    "bureau-reference.jpg"
+   ],
+   "files": {
+    "bureau-reference.jpg": {
+     "name": "bureau-reference.jpg",
+     "blob": "accefb5b7b566b25af335137136aeb20",
+     "size": 604978,
+     "type": "image/jpeg"
+    }
+   }
+  }
+ },
+ "blobs": {},
+ "docs": {
+  "readme": "project/README.md",
+  "sections": []
+ },
+ "lastChange": {
+  "by": "rito27959-arch",
+  "at": "2026-11-17T16:55:00Z",
+  "via": "Claude (claude.ai)",
+  "note": "Création du système : jetons, 20 composants, ressources, couverture."
+ }
+}
